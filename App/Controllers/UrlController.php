@@ -16,6 +16,10 @@ class UrlController
 
     public function create(string $url)
     {
+        if (empty($url)) {
+            throw new \Exception('Url param required!');
+        }
+
         $urlModel = new Url();
         $urlModel->url = $url;
 
@@ -35,7 +39,9 @@ class UrlController
 
     public function redirect(string $code)
     {
-        (new Response())->redirect((new Helper())->siteURL() . $code);
+        $repository = new UrlRepository();
+        $url = $repository->getOneBy('code', $code);
+        (new Response())->redirect($url);
     }
 
 }

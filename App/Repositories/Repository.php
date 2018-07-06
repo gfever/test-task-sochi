@@ -22,7 +22,7 @@ abstract class Repository implements RepositoryInterface
 
     public function __construct()
     {
-        $config = include '../../config/database.php';
+        $config = include __DIR__ . '/../../config/database.php';
         $this->connect = new \PDO("mysql:host={$config['host']};dbname={$config['dbname']}", $config['username'], $config['password']);
     }
 
