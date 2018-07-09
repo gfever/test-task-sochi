@@ -18,10 +18,19 @@ class Helper
         return $randomString;
     }
 
-    function siteURL()
+    public function siteURL()
     {
         $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
         $domainName = $_SERVER['HTTP_HOST'].'/';
         return $protocol.$domainName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUri(): string
+    {
+        $uriParts = explode('?', $_SERVER['REQUEST_URI'], 2);
+        return trim($uriParts[0], '/');
     }
 }

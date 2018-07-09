@@ -26,11 +26,17 @@ abstract class Repository implements RepositoryInterface
         $this->connect = new \PDO("mysql:host={$config['host']};dbname={$config['dbname']}", $config['username'], $config['password']);
     }
 
+    public function getConnect()
+    {
+        return $this->connect;
+    }
+
     /**
      * @param ModelInterface $model
      * @return bool
+     * @throws \ErrorException
      */
-    public function create(ModelInterface $model)
+    public function create(ModelInterface $model): bool
     {
         $attributes = array_filter($model->getAttributes());
 
@@ -38,11 +44,16 @@ abstract class Repository implements RepositoryInterface
             return ':' . $value;
         }, array_keys($attributes));
 
-        $sql = "INSERT INTO {$this->table} ({implode(',', array_keys($attributes))}) VALUES ({implode(',', $keys)})";
-
+        $sql = 'INSERT INTO ' . $this->table . ' (' . implode(',', array_keys($attributes)) . ') VALUES (' . implode(',', $keys). ')';
+        $this->connect->setAttribute( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING );
         $query = $this->connect->prepare($sql);
 
-        return $query->execute(array_combine($keys, array_values($attributes)));
+        $result = $query->execute(array_combine($keys, array_values($attributes)));
+        if (!$result) {
+            throw new \ErrorException($this->connect->errorInfo());
+        }
+
+        return $result;
     }
 
     /**
@@ -52,11 +63,15 @@ abstract class Repository implements RepositoryInterface
      */
     public function getOneBy(string $name, string $value)
     {
-        $code = \PDO::quote($value);
-        $result = $this->connect->query("SELECT * FROM {$this->table} WHERE {$name} = {$code} LIMIT 1");
-        $result->setFetchMode(\PDO::FETCH_CLASS, $this->model);
+        $query = "SELECT * FROM {$this->table} WHERE {$name} = :val LIMIT 1";
+        $statement = $this->connect->prepare($query);
+        $statement->bindValue(':val', $value, \PDO::PARAM_STR);
+        $statement->setFetchMode(\PDO::FETCH_CLASS, $this->model);
+        $statement->execute();
 
-        return $result->fetch();
+        return $statement->fetch();
     }
+
+
 
 }

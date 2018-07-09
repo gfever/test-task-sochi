@@ -28,10 +28,16 @@ class Response
         // ok, validation error, or failure
         header('Status: '.$status[$code]);
         // return the encoded json
-        return json_encode(array(
+        echo json_encode(array(
             'status' => $code < 300, // success or not?
             'message' => $message
         ));
+    }
+
+    public function sendString(string $message)
+    {
+        header('Status: 200 OK');
+        echo($message);
     }
 
     public function redirect($url)

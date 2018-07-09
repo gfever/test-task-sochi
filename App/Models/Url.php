@@ -4,8 +4,6 @@
  */
 
 namespace App\Models;
-
-
 class Url extends Model
 {
     public $id;

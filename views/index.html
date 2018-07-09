@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+</head>
+<body>
+<div class="page__form">
+    <form action="/create" name="url-form" id="url-form">
+        <div class="form">
+            <div class="form__long-url">
+                <label for="url">
+                    Long URL
+                </label>
+                <input type="url" class="input-text" id="url" name="url">
+                <input type="submit" class="btn" value="Do!">
+            </div>
+            <div class="form__short-url">
+                <label>
+                    Short URL
+                </label>
+            </div>
+            <div class="form__result">
+                <div id="result"></div>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="/js/script.js"></script>
+</body>
+</html>

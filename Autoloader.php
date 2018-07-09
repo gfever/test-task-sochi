@@ -16,3 +16,5 @@ class Autoloader
         });
     }
 }
+
+Autoloader::register();

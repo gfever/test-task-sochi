@@ -22,15 +22,13 @@ services:
 
   database:
     image: mysql:5.7
+    container_name: mysql_xiagag
     volumes:
-      - dbdata:/var/lib/mysql
+      - /tmp/xiag_db:/var/lib/mysql
     environment:
       - "MYSQL_DATABASE=homestead"
       - "MYSQL_USER=homestead"
       - "MYSQL_PASSWORD=secret"
       - "MYSQL_ROOT_PASSWORD=secret"
     ports:
-        - "33062:3306"
-
-volumes:
-  dbdata:
+        - "33063:3306"
