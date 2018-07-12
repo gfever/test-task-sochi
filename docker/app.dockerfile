@@ -8,3 +8,10 @@ RUN apt-get update && apt-get install -y libmcrypt-dev  \
     && pecl install memcached \
     && docker-php-ext-enable xdebug memcached \
     && docker-php-ext-install opcache mbstring pdo_mysql mcrypt \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+
+ADD ./ /var/www
+WORKDIR /var/www
+
+RUN composer install

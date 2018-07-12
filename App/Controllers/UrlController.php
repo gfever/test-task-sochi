@@ -6,6 +6,7 @@
 namespace App\Controllers;
 
 
+use App\Container;
 use App\Helpers\Helper;
 use App\Models\Url;
 use App\Repositories\UrlRepository;
@@ -13,24 +14,28 @@ use App\Response;
 
 class UrlController
 {
-    public function index()
+    /**
+     * @return array
+     */
+    public function index(): array
     {
-        echo file_get_contents(__DIR__ . '/../../views/index.html');
+        return (new Response())->sendString(file_get_contents(__DIR__ . '/../../views/index.html'));
     }
 
     /**
-     * @param string $url
+     * @return array
      * @throws \ErrorException
      */
-    public function create(): void
+    public function create(): array
     {
         $url = $_POST['url'];
         if (empty($url) || filter_var($url, FILTER_VALIDATE_URL) === false) {
             throw new \InvalidArgumentException('Invalid url!');
         }
 
-        $repository = new UrlRepository();
-        $helper = new Helper();
+        /** @var UrlRepository $repository */
+        $repository = Container::make(UrlRepository::class);
+        $helper = Container::make(Helper::class);
         $urlModel = $repository->getOneBy('url', $url);
 
         if (!$urlModel instanceof Url) {
@@ -48,26 +53,26 @@ class UrlController
             $repository->create($urlModel);
         }
 
-        (new Response())->sendString($helper->siteURL() . $urlModel->code);
+        return (new Response())->sendString($helper->siteURL() . $urlModel->code);
     }
 
 
     /**
      * @throws \Exception
      */
-    public function redirect(): void
+    public function redirect(): array
     {
-        $code = (new Helper())->getUri();
+        $code = Container::make(Helper::class)->getUri();
         if (empty($code)) {
             throw new \InvalidArgumentException('Code can\'t be empty');
         }
-        $repository = new UrlRepository();
+        $repository = Container::make(UrlRepository::class);
         $url = $repository->getOneBy('code', $code);
         if (empty($url)) {
             throw new \Exception('Url not found', 404);
         }
 
-        (new Response())->redirect($url->url);
+        return (new Response())->redirect($url->url);
     }
 
 }

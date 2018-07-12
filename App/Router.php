@@ -46,7 +46,13 @@ class Router
     public function process(): void
     {
         try{
-            $this->controller->{$this->action}();
+            $result = $this->controller->{$this->action}();
+            foreach ($result['headers'] as $headerName => $info) {
+                header("{$headerName}: {$info[0]}", $info[1]);
+            }
+            if (!empty($result['message'])) {
+                echo($result['message']);
+            }
         } catch (\Exception $e) {
             http_response_code($e->getCode());
         }
